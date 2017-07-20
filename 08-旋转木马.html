@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            list-style:none;
+        }
+        .box{
+            width: 1200px;
+            height: 600px;
+            border: 1px solid #ccc;
+            margin: 50px auto;
+            position: relative;
+            overflow: hidden;
+        }
+        ul li{
+            position: absolute;
+            top:0;
+            left:200px;
+        }
+        img{
+            width: 100%;
+            height: 100%;
+        }
+        a{
+            width: 100px;
+            position: absolute;
+            top: 50%;
+            margin-top: -50px;/*动态获取*/
+            z-index: 10;
+        }
+
+        .pre{
+            left: 10px;
+          }
+        .next{
+            right: 10px;
+        }
+
+        ol {
+            z-index: 10;
+            position: absolute;
+            bottom: 10px;
+            left:50%;
+            margin-left: -70px;/*动态获取*/
+        }
+
+        ol li {
+            width: 15px;
+            height: 15px;
+            background: #ccc;
+            border-radius: 50%;
+            float: left;
+        }
+
+        ol li.cur {
+            background: black;
+        }
+
+        ol li + li {
+            margin-left: 10px;
+        }
+    </style>
+    <script src="js/myJs.js"></script>
+    <script>
+        window.onload = function () {
+            var json = [
+                {
+                    width:800,
+                    height:400,
+                    top:200,
+                    left:200,
+                    zIndex:3,
+                    opacity:100
+                },
+                {
+                    width:500,
+                    height:300,
+                    top:100,
+                    left:700,
+                    zIndex:2,
+                    opacity:80
+                },
+                {
+                    width:400,
+                    height:250,
+                    top:0,
+                    left:600,
+                    zIndex:1,
+                    opacity:40
+                },
+                {
+                    width:400,
+                    height:250,
+                    top:0,
+                    left:200,
+                    zIndex:1,
+                    opacity:40
+                },
+                {
+                    width:500,
+                    height:300,
+                    top:100,
+                    left:0,
+                    zIndex:2,
+                    opacity:80
+                }
+
+            ];
+            var oBox = document.querySelector(".box");
+            var oUl = oBox.querySelector("ul");
+            var oNextBtn = document.querySelector(".next");
+            var oPreBtn = document.querySelector(".pre");
+            var aLi = oUl.children;
+            oNextBtn.style.marginTop = -oNextBtn.offsetWidth/2 + "px";
+            oPreBtn.style.marginTop = -oPreBtn.offsetWidth/2 + "px";
+            //小圆点
+            var oDot = oBox.querySelector("ol");
+            for(var i=0;i<aLi.length;i++){
+                var Li = document.createElement("li");
+                oDot.appendChild(Li);
+            }
+            oDot.style.marginLeft  = -oDot.offsetWidth/2 + "px";
+            var oDotLi = oDot.children;
+            init();
+            var num=0;
+            //初始化
+             function init() {
+               for(var i=0;i<aLi.length;i++){
+                   animation(aLi[i],{width:json[i].width,
+                       height:json[i].height,
+                       top:json[i].top,
+                       left:json[i].left,
+                       zIndex:json[i].zIndex,
+                       opacity:json[i].opacity})
+               }
+           }
+           // 下一张
+            oNextBtn.onclick  = function () {
+                num++;
+                if(num>=aLi.length)
+                    num=0;
+                changeDot();
+                //[1,2,3,4,5]变成[5,1,2,3,4]
+                json.unshift(json.pop());//把最后一张的样式放在第一张
+                init();
+            };
+            //上一张
+            oPreBtn.onclick  = function () {
+                num--;
+                if(num<0)
+                    num=aLi.length-1;
+                changeDot();
+                //[1,2,3,4,5]变成[2,3,4,5,1]
+                json.push(json.shift());//把第一张的样式放在最后一张
+
+                init();
+            };
+            //移动到箭头位置停止轮播
+            oNextBtn.onmouseover = function () {
+                /* alert()*/
+                /*console.log(timer);*/
+                clearInterval(timer);
+            };
+            oPreBtn.onmouseover = function () {
+                clearInterval(timer);
+            };
+
+            //离开箭头位置开启轮播
+            oNextBtn.onmouseout = function () {
+                autoPlay();
+            };
+            oPreBtn.onmouseout = function () {
+                autoPlay();
+            };
+
+
+            //自动轮播
+            var timer=null;
+            function autoPlay() {
+                clearInterval(timer);
+                timer  = setInterval(function () {
+                    json.unshift(json.pop());//把最后一张的样式放在第一张
+                    num++;
+                    if(num>=aLi.length)
+                        num=0;
+                    changeDot();
+                    init();
+                },2000)
+            }
+            autoPlay();
+
+            //小圆点变动
+            function changeDot() {
+
+                for (var i = 0; i < oDotLi.length; i++) {
+                    oDotLi[i].className = "";
+                }
+                oDotLi[num].className = "cur";
+            }
+            changeDot();
+
+            //小圆点触碰
+            for(var i=0;i<oDotLi.length;i++){
+                oDotLi[i].index = i;
+                oDotLi[i].onmouseover = function () {
+                    clearInterval(timer);
+                   /* console.log(num);*/
+                    var sum = this.index - num;
+
+                  /*  if(sum > 0) {//向右走
+                        for (var i = 0; i < sum; i++) {
+                            json.unshift(json.pop());
+                        }
+                    }
+                    else{//向左走
+                        for (var i = 0; i < -sum; i++) {
+                            json.push(json.shift());
+                        }
+                    }*/
+                    if(sum<0){
+                       sum = aLi.length + sum;//向左走的步数相当于向右走li的个数减去相差的步数
+                     }
+                    for (var i = 0; i < sum; i++) {
+                        json.unshift(json.pop());
+                    }
+                    num=this.index;
+                    init();
+                    changeDot();
+                };
+                oDotLi[i].onmouseout = function () {
+                    autoPlay();
+                }
+            }
+        }
+
+    </script>
+</head>
+<body>
+    <div class="box">
+        <ul>
+            <li><img src="images/slidepic1.jpg" alt=""></li>
+            <li><img src="images/slidepic2.jpg" alt=""></li>
+            <li><img src="images/slidepic3.jpg" alt=""></li>
+            <li><img src="images/slidepic4.jpg" alt=""></li>
+            <li><img src="images/slidepic5.jpg" alt=""></li>
+        </ul>
+            <a href="javascript:;" class="pre"><img src="images/leftArrow.png" alt=""></a>
+            <a href="javascript:;" class="next"><img src="images/rightArrow.png" alt=""></a>
+        <ol>
+           <!-- <li class="cur"></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>-->
+        </ol>
+    </div>
+</body>
+</html>

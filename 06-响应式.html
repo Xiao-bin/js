@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        ul {
+            width: 100%;
+            position: relative;
+        }
+
+        ul li {
+            width: 16.6666666%;
+            float: left;
+            height: 200px;
+            margin-top: 20px;
+            background: #ccc;
+        }
+
+        ul li:nth-child(2n) {
+            background: #999;
+        }
+    </style>
+    <script src="js/myJs.js"></script>
+    <script>
+        window.onload = function () {
+            var oUl = document.querySelector("ul");
+            var oLi = oUl.querySelectorAll("li");
+            var oPos = [];
+            for (var i = 0; i < oLi.length; i++) {
+                oPos[i] = {left: oLi[i].offsetLeft, top: oLi[i].offsetTop};
+            }
+             console.log(oPos);
+            function init() {
+                for (var i = 0; i < oLi.length; i++) {
+                  /*  alert();*/
+                    oLi[i].style.position = "absolute";
+                    animation(oLi[i], {left: oPos[i].left, top: oPos[i].top});
+                }
+            }
+
+            init();
+
+
+            window.onresize = function () {
+                var X = document.body.clientWidth || document.documentElement.clientWidth;
+                for (var i = 0; i < oLi.length; i++) {
+                   oLi[i].style.position = "static";
+                    if(X<640){
+                        oLi[i].style.width = "33.333333%";
+                    } else if (X < 900) {
+                        oLi[i].style.width = "25%";
+                    }else{
+                        oLi[i].style.width = "16.66666%";
+                    }
+                }
+                for (var i = 0; i < oLi.length; i++) {
+                    oPos[i] = {left: oLi[i].offsetLeft, top: oLi[i].offsetTop};
+                }
+                init();
+            }
+
+        }
+
+
+    </script>
+</head>
+<body>
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+</body>
+</html>

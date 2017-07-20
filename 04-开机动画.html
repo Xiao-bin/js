@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .box{
+            position: absolute;
+            right: 0;
+            bottom:0;
+            overflow: hidden;
+        }
+       #btn{
+         /* background: #000; */
+           width: 10px;
+           height: 10px;
+           display: inline-block;
+           position: absolute;
+           top:6px;
+           right: 14px;
+           cursor: pointer;
+       }
+        #top{
+            position: relative;
+        }
+        #bottom{
+            /*height: 105px;*/
+            overflow: hidden;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="box" id="box">
+
+        <div id="top">
+            <img src="images/t.jpg" alt="">
+        </div>
+        <span id="btn"></span>
+        <div id="bottom">
+            <img src="images/b.jpg" alt="">
+        </div>
+    </div>
+</body>
+<script src="js/myJs.js"></script>
+<script>
+    var oBox = $("box");
+    var oBtn = $("btn");
+    var oTop = $("top");
+    var oBottom = $("bottom");
+
+    oBtn.onclick = function () {
+        var oRight = -oBox.offsetWidth;
+        animation(oBottom,{height:0},function () {
+            animation(oTop,{right:oRight})
+        })
+    }
+</script>
+</html>

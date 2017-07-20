@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        body, html {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .box {
+            /*  overflow: hidden;*/
+            width: 100%;
+            height: 300px;
+            margin: 50px auto;
+            /* border:1px solid #ccc;*/
+            position: relative
+
+        }
+
+        ul li {
+            position: absolute;
+            left: 375px;
+            width: 100%;
+            height: 300px;
+            background: pink;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .box a {
+
+            width: 50px;
+            line-height: 50px;
+            text-decoration: none;
+            position: absolute;
+            top: 50%;
+            margin-top: -25px;
+            color: white;
+
+        }
+
+        .box .next {
+            right: 10px;
+        }
+
+        .box .pre {
+            left: 10px;
+        }
+
+        ol {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+        }
+
+        ol li {
+            width: 5px;
+            height: 5px;
+            background: #000;
+            border-radius: 50%;
+            float: left;
+        }
+
+        ol li.cur {
+            background: #fff;
+        }
+
+        ol li + li {
+            margin-left: 10px;
+        }
+    </style>
+    <script src="js/myJs.js"></script>
+    <script>
+        window.onload = function () {
+            var oBox = document.querySelector(".box");
+            var oUl = document.querySelector(".box ul");
+            var aLi = oUl.children;
+            var oDot = oBox.querySelector("ol");
+            var oDotLi = oDot.children;
+            var deviceWidth = document.body.clientWidth;  //屏幕宽度
+            var oNextBtn = document.querySelector(".next");
+            var oPreBtn = document.querySelector(".pre");
+            aLi[0].style.left = "0px";
+            var length = aLi.length;
+            var key = 0;
+            //右箭头跳转
+            oNextBtn.onclick = function (ev) {
+
+                next();
+
+            };
+            function next() {
+                animation(aLi[key], {left: -oBox.clientWidth});
+                key++;
+                key = key >= length ? 0 : key;
+                aLi[key].style.left = oBox.clientWidth + "px";
+                animation(aLi[key], {left: 0});
+                changeDot();
+            }
+
+            //左箭头跳转
+            oPreBtn.onclick = function () {
+                animation(aLi[key], {left: oBox.clientWidth});
+                key--;
+                key = key < 0 ? length - 1 : key;
+                aLi[key].style.left = -oBox.clientWidth + "px";
+                animation(aLi[key], {left: 0});
+                changeDot();
+            };
+
+            //自动轮播
+       /*     autoPlay();*/
+          /*  shiftIn();
+            shiftOut();*/
+            var timer = 0;
+            function autoPlay() {
+                clearInterval(timer);
+                timer = setInterval(function () {
+                    next();
+                }, 3000)
+            }
+            //电脑鼠标移入移出
+           /* function shiftIn() {
+                oBox.onmouseover = function () {
+                    alert(0);
+                    clearInterval(timer);
+                }
+            }
+            function shiftOut() {
+                oBox.onmouseout= function () {
+                    autoPlay();
+                }
+            }*/
+            /* //小圆点移动
+             for(var i=0; i<oDotLi.length; i++){
+             oDotLi[i].index = i;
+             oDotLi[i].onmouseover = function () {
+             for(var i=0; i<oDotLi.length; i++){
+             oDotLi[i].className="";
+             }
+             oDotLi[this.index].className="cur";
+             }
+             }*/
+            //小圆点变动
+            function changeDot() {
+                for (var i = 0; i < oDotLi.length; i++) {
+                    oDotLi[i].className = "";
+                }
+                oDotLi[key].className = "cur";
+            }
+
+            //鼠标拖动
+            var startX = 0, moveX = 0;
+            oUl.addEventListener('touchstart', touchstartImg, false);
+            oUl.addEventListener('touchmove', touchmoveImg, false);
+            oUl.addEventListener('touchend', touchendImg, false);
+            function touchstartImg(ev) {
+                clearInterval(timer);
+                var oEvent = ev || event;
+                startX = oEvent.targetTouches[0].clientX;
+                moveX=0;
+                navL = aLi[key].offsetLeft;
+        }
+
+            function touchmoveImg(ev) {
+                var oEvent = ev || event;
+                moveX = oEvent.targetTouches[0].clientX - startX;
+                 console.log(moveX);
+                if (moveX > 0) {
+                    /*   animation(aLi[key],{left:navL+moveX});*/
+                    aLi[key].style.left = navL + moveX + "px";
+                    key--;
+                    key = key < 0 ? length - 1 : key;
+                    /*   aLi[key].style.left =+"px";*/
+                    aLi[key].style.left = -oBox.clientWidth + moveX + "px";
+                    /* animation(aLi[key],{left:moveX -oBox.clientWidth});*/
+                    key++;
+                    key = key >= length ? 0 : key;
+                } else if (moveX < 0) {
+                    aLi[key].style.left = navL + moveX + "px";
+                    key++;
+                    key = key >= length ? 0 : key;
+                    aLi[key].style.left = oBox.clientWidth + moveX + "px";
+                    key--;
+                    key = key < 0 ? length - 1 : key;
+                }
+
+            }
+
+            function touchendImg(ev) {
+               console.log(moveX);
+                if (moveX >= deviceWidth / 4) {
+                    animation(aLi[key], {left: oBox.clientWidth});
+                    key--;
+                    key = key < 0 ? length - 1 : key;
+                    animation(aLi[key], {left: 0});
+                    changeDot();
+                } else if (moveX <= -deviceWidth / 4) {
+                    animation(aLi[key], {left: -oBox.clientWidth});
+                    key++;
+                    key = key >= length ? 0 : key;
+                    animation(aLi[key], {left: 0});
+                    changeDot();
+                } else {
+                    if(moveX>0){
+                        animation(aLi[key], {left: 0});
+                        key--;
+                        key = key < 0 ? length - 1 : key;
+                        animation(aLi[key], {left:-oBox.clientWidth },function () {
+                        /*    alert(key);*/
+                            aLi[key].style.left = oBox.clientWidth+"px";
+                            key++;
+                            key = key >= length ? 0 : key;
+                        });
+                    }
+                    else if(moveX<0){
+                        animation(aLi[key], {left: 0});
+                        key++;
+                        key = key >= length ? 0 : key;
+                        animation(aLi[key], {left:oBox.clientWidth },function () {
+                            aLi[key].style.left = -oBox.clientWidth+"px";
+                            key--;
+                            key = key < 0 ? length - 1 : key;
+                        });
+                    }
+                }
+               /* autoPlay();*/
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="box">
+    <ul>
+        <li><img src="images/1.jpg" alt=""></li>
+        <li><img src="images/2.jpg" alt=""></li>
+        <li><img src="images/3.jpg" alt=""></li>
+        <li><img src="images/4.jpg" alt=""></li>
+        <li><img src="images/5.jpg" alt=""></li>
+    </ul>
+    <ol>
+        <li class="cur"></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ol>
+    <a href="javascript:;" class="pre"><img src="images/leftArrow.png" alt=""></a>
+    <a href="javascript:;" class="next"><img src="images/rightArrow.png" alt=""></a>
+</div>
+</body>
+</html>

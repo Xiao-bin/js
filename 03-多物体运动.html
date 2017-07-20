@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        *{
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        ul li{
+            width: 300px;
+            height: 50px;
+            background: pink;
+            margin-top: 20px;
+        }
+    </style>
+    <script>
+        window.onload =  function () {
+            var oUl = document.querySelector("ul");
+            var oLi = oUl.children;
+            for(var i=0;i<oLi.length;i++)
+            {
+                oLi[i].onmouseover = function () {
+                    move(this,600);
+                };
+                oLi[i].onmouseout = function () {
+                    move(this,300);
+                };
+            }
+
+            function move(obj,iTarget) {
+                clearInterval(obj.timer);
+                obj.timer = setInterval(function () {
+                    var speed = (iTarget - obj.offsetWidth)/10;
+                    speed = speed>0 ? Math.ceil(speed) : Math.floor(speed);
+                    if(speed == 0){
+                        clearInterval(obj.timer);
+                    }
+                    obj.style.width = obj.offsetWidth + speed +"px";
+                },30)
+            }
+
+        }
+    </script>
+</head>
+<body>
+<ul>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+    <li></li>
+</ul>
+</body>
+</html>

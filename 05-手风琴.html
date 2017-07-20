@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .box {
+            margin: 50px auto;
+            width: 980px;
+            overflow: hidden;
+        }
+        .box ul{
+            width: 1300px;
+            overflow: hidden;
+        }
+        .box ul li {
+            width: 200px;
+            height: 400px;
+            border: 1px solid #ccc;
+            float: left;
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="js/myJs.js"></script>
+    <script>
+        window.onload = function () {
+            var imgArr = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg'];
+            var oUl = document.querySelector(".box ul");
+            var oLi = document.querySelectorAll(".box ul li");
+
+            for (var i = 0; i < oLi.length; i++) {
+                oLi[i].style.background = "url(images/" + imgArr[i] + ")";
+                oLi[i].onmouseover = function () {
+                    for (var i = 0; i < oLi.length; i++) {
+                            animation(oLi[i], {width: 50});
+                    }
+                    animation(this, {width: 800});
+                  /*  this.onmouseout = function () {
+                        for (var i = 0; i < oLi.length; i++) {
+                            animation(oLi[i], {width: 200});
+                        }
+                    };*/
+                }
+            }
+
+
+        }
+    </script>
+</head>
+<body>
+<div class="box">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+</body>
+</html>
